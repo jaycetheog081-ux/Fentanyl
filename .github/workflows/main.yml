@@ -35,7 +35,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@main
         with:
-            submodules: recursive
+          submodules: recursive
 
       - name: Install Procursus
         uses: dhinakg/procursus-action@main
@@ -54,7 +54,7 @@ jobs:
           export THEOS="${BASEDIR}/theos"
           mkdir -p $THEOS
           curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos >> install-theos.sh
-          gsed -E "/^\s*get_theos\s*$/,+1 s/^(\s*)(get_sdks)\s*$/\1mkdir -p \${THEOS}\/sdks\n\1touch \${THEOS}\/sdks\/sdk\n\1\2/g" -i install-theos.sh
+          gsed -E "/^\s*get_theos\s*$/,+1 s/^(\s*)(get_sdks)\s*$/\1mkdir -p \${THEOS}/sdks\n\1touch \${THEOS}/sdks/sdk\n\1\2/g" -i install-theos.sh
           bash install-theos.sh
           curl -L https://github.com/theos/sdks/releases/latest/download/iPhoneOS16.5.sdk.tar.xz --output $THEOS/sdks/iPhoneOS16.5.sdk.tar.xz
           gunzip $THEOS/sdks/iPhoneOS16.5.sdk.tar.xz
@@ -88,9 +88,9 @@ jobs:
 
       - name: Download Bootstraps
         run: |
-            set -x
-            cd Application/Dopamine/Resources
-            ./download_bootstraps.sh
+          set -x
+          cd Application/Dopamine/Resources
+          ./download_bootstraps.sh
 
       - name: Build
         run: |
@@ -99,10 +99,15 @@ jobs:
           export THEOS="${BASEDIR}/theos"
           gmake -j$(sysctl -n hw.logicalcpu) NIGHTLY=1
 
+      - name: Verify IPA
+        run: |
+          test -f Application/Fentanyl.ipa
+          ls -lh Application/Fentanyl.ipa
+
       - name: Upload Artifact
-        id: dopamine-latest-upload
+        id: fentanyl-latest-upload
         uses: actions/upload-artifact@main
         with:
           name: Fentanyl
-          path: |
-            ${{ github.workspace }}/Application/Dopamine.ipa
+          path: Application/Fentanyl.ipa
+          if-no-files-found: error
