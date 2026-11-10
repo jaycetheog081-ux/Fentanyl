@@ -46,7 +46,7 @@ jobs:
       - name: Install better GNU Make
         run: |
           brew install make
-          echo "PATH=$(brew --prefix make)/libexec/gnubin:$PATH" >> $GITHUB_ENV
+          echo "PATH=$(brew --prefix make)/libexec/gnubin:$PATH" >> "$GITHUB_ENV"
 
       - name: Install THEOS
         run: |
@@ -101,12 +101,13 @@ jobs:
           git clone https://github.com/CRKatri/trustcache
           cd trustcache
 
-          export CFLAGS="$CFLAGS -I$(brew --prefix openssl)/include -arch arm64"
-          export LDFLAGS="$LDFLAGS -L$(brew --prefix openssl)/lib -arch arm64"
+          export CFLAGS="${CFLAGS:-} -I$(brew --prefix openssl)/include -arch arm64"
+          export LDFLAGS="${LDFLAGS:-} -L$(brew --prefix openssl)/lib -arch arm64"
 
           gmake -j"$(sysctl -n hw.logicalcpu)" OPENSSL=1
 
-          sudo cp trustcache /opt/procursus/bin/
+          sudo install -d /opt/procursus/bin
+          sudo install -m 755 trustcache /opt/procursus/bin/trustcache
 
       - name: Set Environment Variables
         run: |
@@ -146,7 +147,7 @@ jobs:
 
           if [ ! -f "Application/Fentanyl.ipa" ]; then
             echo "::error::Fentanyl.ipa was not generated."
-            echo "Checking for available IPA files:"
+            echo "Available IPA files:"
             find . -name "*.ipa" -print
             exit 1
           fi
