@@ -181,7 +181,7 @@
 
     NSString *jailbreakButtonTitle = DOLocalizedString(@"Button_Jailbreak_Title");
     if (!isSupported)
-        jailbreakButtonTitle = DOLocalizedString(@"Unsupported");
+        jailbreakButtonTitle = DOLocalizedString(@"yo this don't support you");
     else if (isJailbroken)
         jailbreakButtonTitle = DOLocalizedString(@"Status_Title_Jailbroken");
     else if (removeJailbreakEnabled)
